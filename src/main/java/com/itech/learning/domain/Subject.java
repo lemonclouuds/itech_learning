@@ -1,9 +1,12 @@
 package com.itech.learning.domain;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +24,12 @@ public class Subject {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @OneToMany(mappedBy = "subject")
+    @EqualsAndHashCode.Exclude
+    private List<Lesson> lessons;
+
     public Subject(String title) {
         this.title = title;
+        this.lessons = new ArrayList<>();
     }
 }

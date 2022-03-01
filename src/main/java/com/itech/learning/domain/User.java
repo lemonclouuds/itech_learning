@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -39,6 +40,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_role", nullable = false)
     private UserRole userRole;
+
+    @OneToMany(mappedBy = "user")
+    private List<Rating> rates;
 
     public User(String firstName, String lastName, String email,
                 String username, String password, UserRole userRole) {
