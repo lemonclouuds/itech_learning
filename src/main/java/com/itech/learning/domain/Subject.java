@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -25,8 +26,9 @@ public class Subject {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @OneToMany(mappedBy = "subject")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "subject", orphanRemoval = true)
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JsonManagedReference("subject")
     private List<Lesson> lessons;
 
