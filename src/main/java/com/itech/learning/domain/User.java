@@ -1,5 +1,6 @@
 package com.itech.learning.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -42,6 +43,7 @@ public class User {
     private UserRole userRole;
 
     @OneToMany(mappedBy = "user")
+    @JsonManagedReference("user")
     private List<Rating> rates;
 
     public User(String firstName, String lastName, String email,

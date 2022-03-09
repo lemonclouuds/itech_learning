@@ -1,5 +1,6 @@
 package com.itech.learning.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -23,10 +24,12 @@ public class Rating {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference("user")
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")
+    @JsonBackReference("lesson")
     private Lesson lesson;
 
     public Rating(String rate, User user, Lesson lesson) {

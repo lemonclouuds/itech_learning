@@ -1,5 +1,6 @@
 package com.itech.learning.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class Subject {
 
     @OneToMany(mappedBy = "subject")
     @EqualsAndHashCode.Exclude
+    @JsonManagedReference("subject")
     private List<Lesson> lessons;
 
     public Subject(String title) {
