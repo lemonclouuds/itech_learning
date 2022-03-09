@@ -1,7 +1,7 @@
 package com.itech.learning.controller;
 
-import com.itech.learning.domain.User;
-import com.itech.learning.repository.UserRepository;
+import com.itech.learning.domain.Rating;
+import com.itech.learning.service.RatingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,11 +10,11 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController {
-    private final UserRepository userRepository;
+public class RatingController {
+    private final RatingService ratingService;
 
-    @GetMapping("/users")
-    public List<User> findAll() {
-        return userRepository.findAll();
+    @GetMapping("/ratings")
+    public List<Rating> findAll() {
+        return ratingService.getAll();
     }
 }
