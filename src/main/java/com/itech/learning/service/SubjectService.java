@@ -11,11 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+import static com.itech.learning.service.ExceptionMessage.LESSON_WITH_ID_NOT_FOUND;
+import static com.itech.learning.service.ExceptionMessage.SUBJECT_WITH_ID_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class SubjectService {
-    private final String SUBJECT_WITH_ID_NOT_FOUND = "Subject[%d] not found";
-
     private final SubjectRepository subjectRepository;
     private final LessonRepository lessonRepository;
 
@@ -23,34 +24,46 @@ public class SubjectService {
         return subjectRepository.findAll();
     }
 
-    public void updateTitle(Long subjectId, String title) {
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(
-                () -> new EntityNotFoundException(String.format(SUBJECT_WITH_ID_NOT_FOUND, subjectId)));
+    public Subject updateTitle(Long subjectId, String title) {
+        Subject subject = getById(subjectId);
         subject.setTitle(title);
         subjectRepository.save(subject);
+        return subject;
     }
 
     @Transactional
-    public void addLesson(Long subjectId, Lesson lesson) {
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(
-                () -> new EntityNotFoundException(String.format(SUBJECT_WITH_ID_NOT_FOUND, subjectId)));
+    public Subject addLesson(Long subjectId, Lesson lesson) {
+        Subject subject = getById(subjectId);
         if (!subject.getLessons().contains(lesson)) {
             subject.getLessons().add(lesson);
         }
         subjectRepository.save(subject);
+        return subject;
     }
 
     @Transactional
-    public void deleteLesson(Long subjectId, Long lessonId) {
-        Subject subject = subjectRepository.findById(subjectId).orElseThrow(
-                () -> new EntityNotFoundException(String.format(SUBJECT_WITH_ID_NOT_FOUND, subjectId)));
+    public boolean deleteLesson(Long subjectId, Long lessonId) {
+        boolean res = false;
+        Subject subject = getById(subjectId);
         Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Lessson[%d] not found", lessonId)));
+                () -> new EntityNotFoundException(String.format(LESSON_WITH_ID_NOT_FOUND, lessonId)));
 
         if (subject.getLessons().contains(lesson)) {
             subject.getLessons().remove(lesson);
+            lesson.setSubject(null);
+            res = true;
         }
         subjectRepository.save(subject);
+        lessonRepository.save(lesson);
+        return res;
     }
 
+    public Subject getById(Long subjectId) {
+        return subjectRepository.findById(subjectId).orElseThrow(
+                () -> new EntityNotFoundException(String.format(SUBJECT_WITH_ID_NOT_FOUND, subjectId)));
+    }
+
+    public List<Lesson> getSubjectLessons(Long subjectId) {
+        return getById(subjectId).getLessons();
+    }
 }

@@ -1,4 +1,4 @@
-package com.itech.learning.service;
+package com.itech.learning.service.impl;
 
 import com.itech.learning.domain.User;
 import com.itech.learning.repository.UserRepository;

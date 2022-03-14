@@ -12,13 +12,11 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
+import static com.itech.learning.service.ExceptionMessage.*;
+
 @Service
 @RequiredArgsConstructor
 public class RatingService {
-    private final String LESSON_WITH_ID_NOT_FOUND = "Lesson[%d] not found";
-    private final String USER_WITH_ID_NOT_FOUND = "User[%d] not found";
-    private final String RATING_WITH_ID_NOT_FOUND = "Rating[%d] not found";
-
     private final RatingRepository ratingRepository;
     private final UserRepository userRepository;
     private final LessonRepository lessonRepository;
@@ -27,7 +25,12 @@ public class RatingService {
         return ratingRepository.findAll();
     }
 
-    public Rating addRating(String rate, Long userId, Long lessonId) {
+    public Rating getById(Long ratingId) {
+        return ratingRepository.findById(ratingId).orElseThrow(
+                () -> new EntityNotFoundException(String.format(RATING_WITH_ID_NOT_FOUND, ratingId)));
+    }
+
+    public Rating addRating(Double rate, Long userId, Long lessonId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(String.format(USER_WITH_ID_NOT_FOUND, userId)));
         Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(
@@ -41,11 +44,18 @@ public class RatingService {
         return rating;
     }
 
-    public Rating updateRating(Long ratingId, String rate) {
-        Rating rating = ratingRepository.findById(ratingId).orElseThrow(
-                () -> new EntityNotFoundException(String.format(RATING_WITH_ID_NOT_FOUND, ratingId)));
+    public Rating updateRating(Long ratingId, Double rate) {
+        Rating rating = getById(ratingId);
         rating.setRate(rate);
         ratingRepository.save(rating);
         return rating;
+    }
+
+    public List<Rating> getAllByLessonId(Long lessonId) {
+        return ratingRepository.findAllByLessonId(lessonId);
+    }
+
+    public List<Rating> getAllByUserId(Long userId) {
+        return ratingRepository.findAllByUserId(userId);
     }
 }
