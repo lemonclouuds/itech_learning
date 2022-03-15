@@ -35,7 +35,7 @@ public class Lesson {
     @JsonBackReference("subject")
     private Subject subject;
 
-    @OneToMany(mappedBy = "lesson")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "lesson")
     @JsonManagedReference("lesson")
     private List<Rating> rates;
 

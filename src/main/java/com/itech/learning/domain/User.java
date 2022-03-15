@@ -42,7 +42,7 @@ public class User {
     @Column(name = "user_role", nullable = false)
     private UserRole userRole;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonManagedReference("user")
     private List<Rating> rates;
 

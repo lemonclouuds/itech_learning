@@ -26,7 +26,7 @@ public class Subject {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "subject", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "subject")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @JsonManagedReference("subject")
