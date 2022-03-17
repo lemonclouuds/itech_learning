@@ -20,13 +20,13 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getById(Long userId) {
+    public User findById(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(String.format(USER_WITH_ID_NOT_FOUND, userId)));
     }
 
     public List<Rating> getUserRates(Long userId) {
-        User user = getById(userId);
+        User user = findById(userId);
         return user.getRates();
     }
 }

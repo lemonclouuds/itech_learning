@@ -1,7 +1,6 @@
 package com.itech.learning.controller;
 
 import com.itech.learning.domain.Lesson;
-import com.itech.learning.domain.Rating;
 import com.itech.learning.domain.Subject;
 import com.itech.learning.service.SubjectService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,7 @@ public class SubjectController {
 
     @GetMapping("/subjects/{id}")
     public Subject findById(@PathVariable Long id) {
-        return subjectService.getById(id);
+        return subjectService.findById(id);
     }
 
     @GetMapping("/subjects/{id}/lessons")

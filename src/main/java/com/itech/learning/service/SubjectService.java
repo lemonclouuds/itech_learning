@@ -25,7 +25,7 @@ public class SubjectService {
     }
 
     public Subject updateTitle(Long subjectId, String title) {
-        Subject subject = getById(subjectId);
+        Subject subject = findById(subjectId);
         subject.setTitle(title);
         subjectRepository.save(subject);
         return subject;
@@ -33,7 +33,7 @@ public class SubjectService {
 
     @Transactional
     public Subject addLesson(Long subjectId, Lesson lesson) {
-        Subject subject = getById(subjectId);
+        Subject subject = findById(subjectId);
         if (!subject.getLessons().contains(lesson)) {
             subject.getLessons().add(lesson);
         }
@@ -44,7 +44,7 @@ public class SubjectService {
     @Transactional
     public boolean deleteLesson(Long subjectId, Long lessonId) {
         boolean res = false;
-        Subject subject = getById(subjectId);
+        Subject subject = findById(subjectId);
         Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(
                 () -> new EntityNotFoundException(String.format(LESSON_WITH_ID_NOT_FOUND, lessonId)));
 
@@ -58,12 +58,12 @@ public class SubjectService {
         return res;
     }
 
-    public Subject getById(Long subjectId) {
+    public Subject findById(Long subjectId) {
         return subjectRepository.findById(subjectId).orElseThrow(
                 () -> new EntityNotFoundException(String.format(SUBJECT_WITH_ID_NOT_FOUND, subjectId)));
     }
 
     public List<Lesson> getSubjectLessons(Long subjectId) {
-        return getById(subjectId).getLessons();
+        return findById(subjectId).getLessons();
     }
 }

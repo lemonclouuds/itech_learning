@@ -25,7 +25,7 @@ public class RatingService {
         return ratingRepository.findAll();
     }
 
-    public Rating getById(Long ratingId) {
+    public Rating findById(Long ratingId) {
         return ratingRepository.findById(ratingId).orElseThrow(
                 () -> new EntityNotFoundException(String.format(RATING_WITH_ID_NOT_FOUND, ratingId)));
     }
@@ -45,7 +45,7 @@ public class RatingService {
     }
 
     public Rating updateRating(Long ratingId, Double rate) {
-        Rating rating = getById(ratingId);
+        Rating rating = findById(ratingId);
         rating.setRate(rate);
         ratingRepository.save(rating);
         return rating;

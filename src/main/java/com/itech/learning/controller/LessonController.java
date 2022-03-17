@@ -20,7 +20,7 @@ public class LessonController {
 
     @GetMapping("/lessons/{id}")
     public Lesson findById(@PathVariable Long id) {
-        return lessonService.getById(id);
+        return lessonService.findById(id);
     }
 
     @GetMapping("/lessons/{id}/ratings")
@@ -38,6 +38,6 @@ public class LessonController {
     @PostMapping("/lessons/{id}")
     public Lesson changeTitle(@PathVariable Long id, @RequestParam String title) {
        lessonService.updateTitle(id, title);
-        return lessonService.getById(id);
+        return lessonService.findById(id);
     }
 }
