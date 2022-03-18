@@ -1,6 +1,8 @@
 package com.itech.learning.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -27,18 +29,15 @@ public class Lesson {
     @Column(name = "solution", nullable = false, columnDefinition = "TEXT")
     private String solution;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id")
     @EqualsAndHashCode.Exclude
+    @JsonBackReference("subject")
     private Subject subject;
 
-    @OneToMany(mappedBy = "lesson")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "lesson")
+    @JsonManagedReference("lesson")
     private List<Rating> rates;
-
-    public Lesson(String title, String solution) {
-        this.title = title;
-        this.solution = solution;
-    }
 
     public Lesson(String title, String solution, Subject subject) {
         this.title = title;
