@@ -5,8 +5,10 @@ import com.itech.learning.domain.User;
 import com.itech.learning.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Collection;
 import java.util.List;
 
 import static com.itech.learning.service.ExceptionMessage.USER_WITH_ID_NOT_FOUND;
@@ -28,5 +30,10 @@ public class UserService {
     public List<Rating> getUserRates(Long userId) {
         User user = findById(userId);
         return user.getRates();
+    }
+
+    @Transactional
+    public void deleteByIdIn(Collection<Long> ids) {
+        userRepository.deleteByIdIn(ids);
     }
 }

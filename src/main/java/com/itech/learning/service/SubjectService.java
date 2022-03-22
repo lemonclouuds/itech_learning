@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Collection;
 import java.util.List;
 
-import static com.itech.learning.service.ExceptionMessage.LESSON_WITH_ID_NOT_FOUND;
 import static com.itech.learning.service.ExceptionMessage.SUBJECT_WITH_ID_NOT_FOUND;
 
 @Service
@@ -42,20 +42,8 @@ public class SubjectService {
     }
 
     @Transactional
-    public boolean deleteLesson(Long subjectId, Long lessonId) {
-        boolean res = false;
-        Subject subject = findById(subjectId);
-        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(
-                () -> new EntityNotFoundException(String.format(LESSON_WITH_ID_NOT_FOUND, lessonId)));
-
-        if (subject.getLessons().contains(lesson)) {
-            subject.getLessons().remove(lesson);
-            lesson.setSubject(null);
-            res = true;
-        }
-        subjectRepository.save(subject);
-        lessonRepository.save(lesson);
-        return res;
+    public void deleteByIdIn(Collection<Long> ids) {
+        subjectRepository.deleteByIdIn(ids);
     }
 
     public Subject findById(Long subjectId) {
