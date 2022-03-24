@@ -5,21 +5,17 @@ import lombok.Data;
 import java.util.Objects;
 
 @Data
-public class LessonDto {
+public class SubjectDto {
     private Long id;
 
     private String title;
-
-    private String solution;
-
-    private Long subjectId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LessonDto lessonDto = (LessonDto) o;
-        return Objects.equals(id, lessonDto.id);
+        SubjectDto that = (SubjectDto) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
