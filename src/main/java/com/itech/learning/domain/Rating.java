@@ -51,4 +51,14 @@ public class Rating {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        return "Rating{" +
+                "id=" + id +
+                ", rate=" + rate +
+                ", user=" + user +
+                ", lesson=" + lesson +
+                '}';
+    }
 }

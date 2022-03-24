@@ -55,4 +55,14 @@ public class Lesson {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    @Override
+    public String toString() {
+        return "Lesson{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", solution='" + solution + '\'' +
+                ", subject=" + subject +
+                '}';
+    }
 }
