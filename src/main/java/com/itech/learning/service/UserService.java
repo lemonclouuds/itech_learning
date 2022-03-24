@@ -33,7 +33,16 @@ public class UserService {
     }
 
     @Transactional
+    public void deleteById(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+        }
+    }
+
+    @Transactional
     public void deleteByIdIn(Collection<Long> ids) {
-        userRepository.deleteByIdIn(ids);
+        for (Long id : ids) {
+            deleteById(id);
+        }
     }
 }

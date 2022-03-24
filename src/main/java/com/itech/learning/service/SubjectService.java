@@ -42,8 +42,17 @@ public class SubjectService {
     }
 
     @Transactional
+    public void deleteById(Long id) {
+        if (subjectRepository.existsById(id)) {
+            subjectRepository.deleteById(id);
+        }
+    }
+
+    @Transactional
     public void deleteByIdIn(Collection<Long> ids) {
-        subjectRepository.deleteByIdIn(ids);
+        for (Long id : ids) {
+            deleteById(id);
+        }
     }
 
     public Subject findById(Long subjectId) {

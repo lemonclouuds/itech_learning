@@ -54,8 +54,17 @@ public class RatingService {
     }
 
     @Transactional
+    public void deleteById(Long id) {
+        if (ratingRepository.existsById(id)) {
+            ratingRepository.deleteById(id);
+        }
+    }
+
+    @Transactional
     public void deleteByIdIn(Collection<Long> ids) {
-        ratingRepository.deleteByIdIn(ids);
+        for (Long id : ids) {
+            deleteById(id);
+        }
     }
 
     public List<Rating> getAllByLessonId(Long lessonId) {

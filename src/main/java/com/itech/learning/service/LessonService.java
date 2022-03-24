@@ -57,8 +57,17 @@ public class LessonService {
     }
 
     @Transactional
+    public void deleteById(Long id) {
+        if (lessonRepository.existsById(id)) {
+            lessonRepository.deleteById(id);
+        }
+    }
+
+    @Transactional
     public void deleteByIdIn(Collection<Long> ids) {
-        lessonRepository.deleteByIdIn(ids);
+        for (Long id : ids) {
+            deleteById(id);
+        }
     }
 
     public List<Lesson> getAllBySubjectId(Long subjectId) {
