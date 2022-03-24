@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -13,7 +14,7 @@ import java.util.List;
 @Table(
         name = "users",
         uniqueConstraints = {@UniqueConstraint(name = "user_email_unique", columnNames = "email"),
-                             @UniqueConstraint(name = "username_unique", columnNames = "username")
+                @UniqueConstraint(name = "username_unique", columnNames = "username")
         }
 )
 public class User {
@@ -42,7 +43,7 @@ public class User {
     @Column(name = "user_role", nullable = false)
     private UserRole userRole;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference("user")
     private List<Rating> rates;
 
@@ -54,5 +55,18 @@ public class User {
         this.username = username;
         this.password = password;
         this.userRole = userRole;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

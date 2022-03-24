@@ -42,20 +42,32 @@ public class LessonService {
         return lessonMapper.lessonToLessonDto(lesson);
     }
 
+    //fix to work with dto
     public Lesson updateTitle(Long lessonId, String title) {
         Lesson lesson = findById(lessonId);
         lesson.setTitle(title);
         return lessonRepository.save(lesson);
     }
 
+    //fix to work with dto
     public Lesson updateSolution(Long lessonId, String solution) {
         Lesson lesson = findById(lessonId);
         lesson.setSolution(solution);
         return lessonRepository.save(lesson);
     }
 
+    @Transactional
+    public void deleteById(Long id) {
+        if (lessonRepository.existsById(id)) {
+            lessonRepository.deleteById(id);
+        }
+    }
+
+    @Transactional
     public void deleteByIdIn(Collection<Long> ids) {
-        lessonRepository.deleteByIdIn(ids);
+        for (Long id : ids) {
+            deleteById(id);
+        }
     }
 
     public List<Lesson> getAllBySubjectId(Long subjectId) {
@@ -63,12 +75,12 @@ public class LessonService {
     }
 
     public List<Rating> getLessonRatings(Long lessonId) {
-        return lessonRepository.findById(lessonId).get().getRates();
+        return findById(lessonId).getRates();
     }
 
     @Transactional
     public Double calculateLessonRating(Long lessonId) {
-        List<Rating> rates = lessonRepository.findById(lessonId).get().getRates();
+        List<Rating> rates = findById(lessonId).getRates();
         double res = 0.0;
         int counter = 0;
         for (Rating rate : rates) {
