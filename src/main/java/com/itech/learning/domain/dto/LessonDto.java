@@ -1,11 +1,16 @@
 package com.itech.learning.domain.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class LessonDto {
+    //can be null
     private Long id;
 
     private String title;
