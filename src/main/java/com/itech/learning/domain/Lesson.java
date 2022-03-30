@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class Lesson {
     @Column(name = "solution", nullable = false, columnDefinition = "TEXT")
     private String solution;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "subject_id")
     @JsonBackReference("subject")
     private Subject subject;
@@ -41,6 +42,7 @@ public class Lesson {
         this.title = title;
         this.solution = solution;
         this.subject = subject;
+        this.rates = new ArrayList<>();
     }
 
     @Override
@@ -54,5 +56,15 @@ public class Lesson {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Lesson{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", solution='" + solution + '\'' +
+                ", subject=" + subject +
+                '}';
     }
 }

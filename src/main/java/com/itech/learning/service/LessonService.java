@@ -4,9 +4,10 @@ import com.itech.learning.domain.Lesson;
 import com.itech.learning.domain.Rating;
 import com.itech.learning.domain.Subject;
 import com.itech.learning.domain.dto.LessonDto;
-import com.itech.learning.mapper.LessonMapper;
 import com.itech.learning.repository.LessonRepository;
+import com.itech.learning.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,10 +20,13 @@ import static com.itech.learning.service.ExceptionMessage.LESSON_WITH_ID_NOT_FOU
 @Service
 @RequiredArgsConstructor
 public class LessonService {
-    private final LessonRepository lessonRepository;
-    private final LessonMapper lessonMapper;
+    private static ModelMapper modelMapper = new ModelMapper();
 
+    private final LessonRepository lessonRepository;
     private final SubjectService subjectService;
+    private final RatingService ratingService;
+
+    private final SubjectRepository subjectRepository;
 
     public List<Lesson> getAll() {
         return lessonRepository.findAll();
@@ -33,27 +37,44 @@ public class LessonService {
                 () -> new EntityNotFoundException(String.format(LESSON_WITH_ID_NOT_FOUND, lessonId)));
     }
 
+    @Transactional
     public LessonDto create(LessonDto lessonDto) {
-        Lesson lesson = lessonMapper.lessonDtoToLesson(lessonDto);
-        Subject subject = subjectService.findById(lessonDto.getSubjectId());
-        lesson.setSubject(subject);
-
-        lesson = lessonRepository.save(lesson);
-        return lessonMapper.lessonToLessonDto(lesson);
+        // no lessonId
+        Lesson lesson = modelMapper.map(lessonDto, Lesson.class);
+        if (lessonRepository.existsById(lessonDto.getId())) {
+            update(lessonDto);
+            //exception - trying to create already existing entity
+        } else {
+            Subject subject = subjectService.findById(lessonDto.getSubjectId());
+            lesson.setSubject(subject);
+            subject.getLessons().add(lesson); //это разве не бд должна делать? + + оно не работает
+            lessonRepository.save(lesson);
+        }
+        return lessonDto;
     }
 
-    //fix to work with dto
-    public Lesson updateTitle(Long lessonId, String title) {
-        Lesson lesson = findById(lessonId);
-        lesson.setTitle(title);
-        return lessonRepository.save(lesson);
-    }
+    @Transactional
+    public LessonDto update(LessonDto lessonDto) {
+        Lesson lesson = modelMapper.map(lessonDto, Lesson.class);
+        if (!lessonRepository.existsById(lessonDto.getId())) {
+            //create(lessonDto);
+            //exception
+        } else {
+            Subject subject = subjectService.findById(lessonDto.getSubjectId());
+            List<Rating> rates = ratingService.getAllByLessonId(lessonDto.getId());
 
-    //fix to work with dto
-    public Lesson updateSolution(Long lessonId, String solution) {
-        Lesson lesson = findById(lessonId);
-        lesson.setSolution(solution);
-        return lessonRepository.save(lesson);
+            lesson.setSubject(subject);
+            lesson.setRates(rates);
+
+            subject.getLessons().add(lesson);
+            //log.info()
+            System.out.println("\n\n\n---------------------------------\n" + subject.getLessons());
+            for (Rating rate : rates) {
+                rate.setLesson(lesson);
+            }
+            lessonRepository.save(lesson);
+        }
+        return lessonDto;
     }
 
     @Transactional

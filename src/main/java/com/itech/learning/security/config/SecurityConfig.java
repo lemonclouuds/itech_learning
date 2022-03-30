@@ -24,7 +24,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
+
     @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                .authorizeRequests()
+                .antMatchers("/")
+                .permitAll();
+    }
+
+    /*@Override
     protected void configure(HttpSecurity http) throws Exception {
         http
             .csrf().disable()
@@ -34,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authenticated()
             .and()
             .httpBasic(); //TODO form login?
-    }
+    }*/
 
     @Bean
     protected DaoAuthenticationProvider daoAuthenticationProvider() {

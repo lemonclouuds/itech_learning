@@ -2,6 +2,7 @@ package com.itech.learning.controller;
 
 import com.itech.learning.domain.Lesson;
 import com.itech.learning.domain.Rating;
+import com.itech.learning.domain.dto.LessonDto;
 import com.itech.learning.service.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,14 @@ public class LessonController {
     //fix
     @PostMapping("/lessons/{id}")
     public Lesson changeTitle(@PathVariable Long id, @RequestParam String title) {
-       lessonService.updateTitle(id, title);
+        //сделать проверку на апдейт несуществующий id (в сервисе)
+
+       //lessonService.updateTitle(id, title);
         return lessonService.findById(id);
+    }
+
+    @PostMapping("/lessons/new")
+    public void create(@RequestBody LessonDto lessonDto) {
+        //проверка не по id, а по уникальному полю (если есть)
     }
 }

@@ -7,24 +7,23 @@ import lombok.NoArgsConstructor;
 import java.util.Objects;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class LessonDto {
-    //can be null
+@AllArgsConstructor
+public class RatingDto {
     private Long id;
 
-    private String title;
+    private Double rate;
 
-    private String solution;
+    private Long userId;
 
-    private Long subjectId;
+    private Long lessonId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LessonDto lessonDto = (LessonDto) o;
-        return Objects.equals(id, lessonDto.id);
+        RatingDto ratingDto = (RatingDto) o;
+        return Objects.equals(id, ratingDto.id);
     }
 
     @Override
