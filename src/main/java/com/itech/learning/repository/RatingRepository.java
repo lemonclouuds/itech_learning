@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface RatingRepository extends JpaRepository<Rating, Long> {
     List<Rating> findAllByUserId(Long id);
-    List<Rating> findAllByLessonId(Long id);
+    List<Rating> findAllBySubjectId(Long id);
     void deleteByIdIn(Collection<Long> ids);
 }

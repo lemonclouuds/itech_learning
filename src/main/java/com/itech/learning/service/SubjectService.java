@@ -1,10 +1,7 @@
 package com.itech.learning.service;
 
-import com.itech.learning.domain.Lesson;
 import com.itech.learning.domain.Subject;
-import com.itech.learning.domain.dto.LessonDto;
 import com.itech.learning.domain.dto.SubjectDto;
-import com.itech.learning.repository.LessonRepository;
 import com.itech.learning.repository.SubjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,7 +20,6 @@ public class SubjectService {
     private static ModelMapper modelMapper = new ModelMapper();
 
     private final SubjectRepository subjectRepository;
-    private final LessonRepository lessonRepository;
 
     public List<Subject> getAll() {
         return subjectRepository.findAll();
@@ -40,7 +36,7 @@ public class SubjectService {
     @Transactional
     public SubjectDto create(SubjectDto subjectDto) {
         if (!subjectRepository.existsById(subjectDto.getId())) {
-            Subject subject = new Subject(subjectDto.getTitle());
+            Subject subject = new Subject(subjectDto.getTitle(), subjectDto.getSolution());
             subjectRepository.save(subject);
         } else {
             update(subjectDto);
@@ -54,20 +50,20 @@ public class SubjectService {
         if (!subjectRepository.existsById(subjectDto.getId())) {
             create(subjectDto);
         } else {
-            List<Lesson> lessons = lessonRepository.findAllBySubjectId(subjectDto.getId());
-            subject.setLessons(lessons);
+            //List<Lesson> lessons = lessonRepository.findAllBySubjectId(subjectDto.getId());
+            //subject.setLessons(lessons);
             subjectRepository.save(subject);
         }
         return subjectDto;
     }
 
     @Transactional
-    public SubjectDto addLesson(Long subjectId, LessonDto lessonDto) {
+    public SubjectDto addLesson(Long subjectId/*, LessonDto lessonDto*/) {
         Subject subject = findById(subjectId);
-        Lesson lesson = modelMapper.map(lessonDto, Lesson.class);
-        if (!subject.getLessons().contains(lesson)) {
+        //Lesson lesson = modelMapper.map(lessonDto, Lesson.class);
+        /*if (!subject.getLessons().contains(lesson)) {
             subject.getLessons().add(lesson);
-        }
+        }*/
         subjectRepository.save(subject);
         return modelMapper.map(subject, SubjectDto.class);
     }
@@ -91,8 +87,8 @@ public class SubjectService {
                 () -> new EntityNotFoundException(String.format(SUBJECT_WITH_ID_NOT_FOUND, subjectId)));
     }
 
-    @Transactional
-    public List<Lesson> getSubjectLessons(Long subjectId) {
-        return findById(subjectId).getLessons();
-    }
+    /*@Transactional
+    public List<Rating> getSubjectRatings(Long subjectId) {
+        return findById(subjectId).getRatings();
+    }*/
 }

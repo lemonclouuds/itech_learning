@@ -11,12 +11,9 @@ import java.util.Objects;
 @AllArgsConstructor
 public class RatingDto {
     private Long id;
-
     private Double rate;
-
     private Long userId;
-
-    private Long lessonId;
+    private Long subjectId;
 
     @Override
     public boolean equals(Object o) {

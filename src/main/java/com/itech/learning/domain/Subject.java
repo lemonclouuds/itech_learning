@@ -26,14 +26,18 @@ public class Subject {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "solution", nullable = false)
+    private String solution;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "subject", cascade = CascadeType.ALL)
     @ToString.Exclude
     @JsonManagedReference("subject")
-    private List<Lesson> lessons;
+    private List<Rating> ratings;
 
-    public Subject(String title) {
+    public Subject(String title, String solution) {
         this.title = title;
-        this.lessons = new ArrayList<>();
+        this.solution = solution;
+        this.ratings = new ArrayList<>();
     }
 
     @Override
