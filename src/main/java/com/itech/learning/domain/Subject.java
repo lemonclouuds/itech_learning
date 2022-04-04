@@ -58,6 +58,7 @@ public class Subject {
         return "Subject{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", solution='" + solution + '\'' +
                 '}';
     }
 }
