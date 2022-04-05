@@ -39,7 +39,8 @@ public class SubjectService {
             Subject subject = new Subject(subjectDto.getTitle(), subjectDto.getSolution());
             subjectRepository.save(subject);
         } else {
-            throw new EntityAlreadyExistsException("Entity already exists");
+            throw new EntityAlreadyExistsException(String.format("Subject with id[%d] already exists",
+                    subjectDto.getId()));
         }
         return subjectDto;
     }
@@ -47,9 +48,9 @@ public class SubjectService {
     @Transactional
     public SubjectDto update(Long subjectId, SubjectDto subjectDto) {
         Subject subject = modelMapper.map(subjectDto, Subject.class);
-        subject.setId(subjectId); //это если не dto.id == null?
+        subject.setId(subjectId);
         if (!subjectRepository.existsById(subjectId)) {
-            throw new EntityNotFoundException();
+            throw new EntityNotFoundException(String.format(SUBJECT_WITH_ID_NOT_FOUND, subjectId));
         } else {
             subjectRepository.save(subject);
         }
