@@ -4,8 +4,9 @@ import com.itech.learning.domain.Rating;
 import com.itech.learning.domain.Subject;
 import com.itech.learning.domain.User;
 import com.itech.learning.domain.dto.RatingDto;
+import com.itech.learning.exception.EntityAlreadyExistsException;
+import com.itech.learning.helper.MapperHelper;
 import com.itech.learning.repository.RatingRepository;
-import com.itech.learning.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.List;
 
-import static com.itech.learning.service.ExceptionMessage.RATING_WITH_ID_NOT_FOUND;
+import static com.itech.learning.constants.ExceptionMessage.RATING_WITH_ID_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -23,59 +24,62 @@ public class RatingService {
     private static ModelMapper modelMapper = new ModelMapper();
 
     private final RatingRepository ratingRepository;
-    private final UserRepository userRepository;
     private final UserService userService;
     private final SubjectService subjectService;
 
-    public List<Rating> getAll() {
-        return ratingRepository.findAll();
+    @Transactional
+    public List<RatingDto> getAll() {
+        return MapperHelper.mapList(ratingRepository.findAll(), RatingDto.class);
     }
 
+    @Transactional
     public Rating findById(Long ratingId) {
         return ratingRepository.findById(ratingId).orElseThrow(
                 () -> new EntityNotFoundException(String.format(RATING_WITH_ID_NOT_FOUND, ratingId)));
     }
 
-    public List<Rating> findAllBySubjectId(Long subjectId) {
-        return ratingRepository.findAllBySubjectId(subjectId);
+    @Transactional
+    public RatingDto findDtoById(Long ratingId) {
+        return modelMapper.map(findById(ratingId), RatingDto.class);
     }
 
-    public List<Rating> findAllByUserId(Long userId) {
-        return ratingRepository.findAllByUserId(userId);
+    public List<RatingDto> findAllBySubjectId(Long subjectId) {
+        return MapperHelper.mapList(ratingRepository.findAllBySubjectId(subjectId), RatingDto.class);
     }
 
-    public RatingDto create(RatingDto ratingDto) {
-        //
-        return ratingDto;
+    public List<RatingDto> findAllByUserId(Long userId) {
+        return MapperHelper.mapList(ratingRepository.findAllByUserId(userId), RatingDto.class);
     }
-
-    /*public Rating addRating(Double rate, Long userId, Long lessonId) {
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException(String.format(USER_WITH_ID_NOT_FOUND, userId)));
-        Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(
-                () -> new EntityNotFoundException(String.format(LESSON_WITH_ID_NOT_FOUND, lessonId)));
-        Rating rating = new Rating(rate, user, lesson);
-
-        if (!ratingRepository.findAll().contains(rating)) {
-            ratingRepository.save(rating);
-        }
-
-        return rating;
-    }*/
 
     @Transactional
-    public RatingDto update(RatingDto ratingDto) throws Exception {
-        if (ratingRepository.existsById(ratingDto.getId())) {
-            Rating rating = modelMapper.map(ratingDto, Rating.class);
-
+    public RatingDto create(RatingDto ratingDto) {
+        Rating rating = modelMapper.map(ratingDto, Rating.class);
+        if (!ratingRepository.existsById(ratingDto.getId())) {
             User user = userService.findById(ratingDto.getUserId());
             Subject subject = subjectService.findById(ratingDto.getSubjectId());
 
             rating.setUser(user);
             rating.setSubject(subject);
-            ratingRepository.save(rating); //TODO modify save() in repo or create update() w/ native query
+            ratingRepository.save(rating);
         } else {
-            throw new Exception(); //TODO custom exception?
+            throw new EntityAlreadyExistsException(String.format("Rating with id[%d] already exists", ratingDto.getId()));
+        }
+        return ratingDto;
+    }
+
+    @Transactional
+    public RatingDto update(Long ratingId, RatingDto ratingDto) {
+        Rating rating = modelMapper.map(ratingDto, Rating.class);
+        rating.setId(ratingId);
+        if (ratingRepository.existsById(ratingId)) {
+            User user = userService.findById(ratingDto.getUserId());
+            Subject subject = subjectService.findById(ratingDto.getSubjectId());
+
+            rating.setUser(user);
+            rating.setSubject(subject);
+            ratingRepository.save(rating);
+        } else {
+            throw new EntityNotFoundException(String.format(RATING_WITH_ID_NOT_FOUND, ratingId));
         }
 
         return ratingDto;
