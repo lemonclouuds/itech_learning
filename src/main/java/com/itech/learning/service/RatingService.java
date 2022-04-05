@@ -1,10 +1,9 @@
 package com.itech.learning.service;
 
-import com.itech.learning.domain.Lesson;
 import com.itech.learning.domain.Rating;
+import com.itech.learning.domain.Subject;
 import com.itech.learning.domain.User;
 import com.itech.learning.domain.dto.RatingDto;
-import com.itech.learning.repository.LessonRepository;
 import com.itech.learning.repository.RatingRepository;
 import com.itech.learning.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 import java.util.List;
 
-import static com.itech.learning.service.ExceptionMessage.*;
+import static com.itech.learning.service.ExceptionMessage.RATING_WITH_ID_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -25,8 +24,8 @@ public class RatingService {
 
     private final RatingRepository ratingRepository;
     private final UserRepository userRepository;
-    private final LessonRepository lessonRepository;
-    //private final LessonService lessonService;
+    private final UserService userService;
+    private final SubjectService subjectService;
 
     public List<Rating> getAll() {
         return ratingRepository.findAll();
@@ -35,6 +34,19 @@ public class RatingService {
     public Rating findById(Long ratingId) {
         return ratingRepository.findById(ratingId).orElseThrow(
                 () -> new EntityNotFoundException(String.format(RATING_WITH_ID_NOT_FOUND, ratingId)));
+    }
+
+    public List<Rating> findAllBySubjectId(Long subjectId) {
+        return ratingRepository.findAllBySubjectId(subjectId);
+    }
+
+    public List<Rating> findAllByUserId(Long userId) {
+        return ratingRepository.findAllByUserId(userId);
+    }
+
+    public RatingDto create(RatingDto ratingDto) {
+        //
+        return ratingDto;
     }
 
     /*public Rating addRating(Double rate, Long userId, Long lessonId) {
@@ -52,21 +64,21 @@ public class RatingService {
     }*/
 
     @Transactional
-    public RatingDto update(RatingDto ratingDto) {
-        Rating rating = modelMapper.map(ratingDto, Rating.class);
-        User user = userRepository.findById(ratingDto.getUserId()).orElseThrow(
-                () -> new EntityNotFoundException(String.format(USER_WITH_ID_NOT_FOUND, ratingDto.getUserId())));
-        Lesson lesson = lessonRepository.findById(ratingDto.getLessonId()).orElseThrow(
-                () -> new EntityNotFoundException(String.format(LESSON_WITH_ID_NOT_FOUND, ratingDto.getLessonId()))
-        );
-        //Lesson lesson = lessonService.findById(ratingDto.getLessonId());
-        // Relying upon circular references is discouraged and they are prohibited by default.
+    public RatingDto update(RatingDto ratingDto) throws Exception {
+        if (ratingRepository.existsById(ratingDto.getId())) {
+            Rating rating = modelMapper.map(ratingDto, Rating.class);
 
-        rating.setUser(user);
-        rating.setLesson(lesson);
-        ratingRepository.save(rating);
+            User user = userService.findById(ratingDto.getUserId());
+            Subject subject = subjectService.findById(ratingDto.getSubjectId());
 
-        return modelMapper.map(rating, RatingDto.class);
+            rating.setUser(user);
+            rating.setSubject(subject);
+            ratingRepository.save(rating); //TODO modify save() in repo or create update() w/ native query
+        } else {
+            throw new Exception(); //TODO custom exception?
+        }
+
+        return ratingDto;
     }
 
     @Transactional
@@ -81,13 +93,5 @@ public class RatingService {
         for (Long id : ids) {
             deleteById(id);
         }
-    }
-
-    public List<Rating> getAllByLessonId(Long lessonId) {
-        return ratingRepository.findAllByLessonId(lessonId);
-    }
-
-    public List<Rating> getAllByUserId(Long userId) {
-        return ratingRepository.findAllByUserId(userId);
     }
 }

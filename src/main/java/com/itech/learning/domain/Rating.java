@@ -29,14 +29,14 @@ public class Rating {
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinColumn(name = "lesson_id")
-    @JsonBackReference("lesson")
-    private Lesson lesson;
+    @JoinColumn(name = "subject_id")
+    @JsonBackReference("subject")
+    private Subject subject;
 
-    public Rating(Double rate, User user, Lesson lesson) {
+    public Rating(Double rate, User user, Subject subject) {
         this.rate = rate;
         this.user = user;
-        this.lesson = lesson;
+        this.subject = subject;
     }
 
     @Override
@@ -57,8 +57,8 @@ public class Rating {
         return "Rating{" +
                 "id=" + id +
                 ", rate=" + rate +
-                ", user=" + user +
-                ", lesson=" + lesson +
+                ", userId=" + user.getId() +
+                ", subjectId=" + subject.getId() +
                 '}';
     }
 }

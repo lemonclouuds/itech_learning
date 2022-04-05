@@ -11,8 +11,8 @@ import java.util.Objects;
 @NoArgsConstructor
 public class SubjectDto {
     private Long id;
-
     private String title;
+    private String solution;
 
     @Override
     public boolean equals(Object o) {
