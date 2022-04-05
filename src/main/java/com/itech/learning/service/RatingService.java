@@ -62,7 +62,7 @@ public class RatingService {
             rating.setSubject(subject);
             ratingRepository.save(rating);
         } else {
-            throw new EntityNotFoundException(String.format(RATING_WITH_ID_NOT_FOUND, ratingDto.getId()));
+            throw new EntityAlreadyExistsException(String.format("Rating with id[%d] already exists", ratingDto.getId()));
         }
         return ratingDto;
     }
@@ -79,7 +79,7 @@ public class RatingService {
             rating.setSubject(subject);
             ratingRepository.save(rating);
         } else {
-            throw new EntityAlreadyExistsException(String.format("Rating with id[%d] already exists", ratingId));
+            throw new EntityNotFoundException(String.format(RATING_WITH_ID_NOT_FOUND, ratingId));
         }
 
         return ratingDto;
