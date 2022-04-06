@@ -1,11 +1,15 @@
 package com.itech.learning.domain.dto;
 
 import com.itech.learning.domain.UserRole;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserDto {
     private Long id;
 
