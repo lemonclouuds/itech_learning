@@ -43,13 +43,13 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    @ResponseStatus(code = HttpStatus.CREATED)
     ResponseEntity<UserDto> create(@RequestBody UserDto userDto) {
-        return ResponseEntity.ok(userService.create(userDto));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userService.create(userDto));
     }
 
     @DeleteMapping("/users/{userId}")
-    @ResponseStatus(code = HttpStatus.OK)
     public ResponseEntity<?> delete(@PathVariable Long userId) {
         userService.deleteById(userId);
         return ResponseEntity

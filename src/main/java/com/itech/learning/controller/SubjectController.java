@@ -48,19 +48,20 @@ public class SubjectController {
     }
 
     @PostMapping("/subjects")
-    @ResponseStatus(code = HttpStatus.CREATED)
     ResponseEntity<SubjectDto> create(@RequestBody SubjectDto subjectDto) {
-        return ResponseEntity.ok(subjectService.create(subjectDto));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(subjectService.create(subjectDto));
     }
 
     @PostMapping("/subjects/{subjectId}/ratings")
-    @ResponseStatus(code = HttpStatus.CREATED)
     public ResponseEntity<RatingDto> createRating(@PathVariable Long subjectId, @RequestBody RatingDto ratingDto) {
-        return ResponseEntity.ok(subjectService.addRating(subjectId, ratingDto));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(subjectService.addRating(subjectId, ratingDto));
     }
 
     @DeleteMapping("/subjects/{subjectId}")
-    @ResponseStatus(code = HttpStatus.OK)
     public ResponseEntity<?> delete(@PathVariable Long subjectId) {
         subjectService.deleteById(subjectId);
         return ResponseEntity
@@ -69,7 +70,6 @@ public class SubjectController {
     }
 
     @DeleteMapping("/subjects/{subjectId}/ratings/{ratingId}")
-    @ResponseStatus(code = HttpStatus.OK)
     public ResponseEntity<?> deleteRating(@PathVariable Long ratingId) {
         ratingService.deleteById(ratingId);
         return ResponseEntity
