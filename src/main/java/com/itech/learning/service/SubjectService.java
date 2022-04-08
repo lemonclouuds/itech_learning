@@ -58,7 +58,7 @@ public class SubjectService {
     }
 
     @Transactional
-    public SubjectDto addRating(Long subjectId, RatingDto ratingDto) {
+    public RatingDto addRating(Long subjectId, RatingDto ratingDto) {
         Subject subject = findById(subjectId);
         User user = userService.findById(ratingDto.getUserId());
         Rating rating = modelMapper.map(ratingDto, Rating.class);
@@ -74,7 +74,7 @@ public class SubjectService {
                 rating.setUser(user);
                 subjectRepository.save(subject);
         }
-        return modelMapper.map(subject, SubjectDto.class);
+        return ratingDto;
     }
 
     @Transactional

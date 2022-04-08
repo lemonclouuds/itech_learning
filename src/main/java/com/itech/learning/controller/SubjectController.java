@@ -1,12 +1,13 @@
 package com.itech.learning.controller;
 
-import com.itech.learning.domain.Lesson;
-import com.itech.learning.domain.Subject;
+import com.itech.learning.domain.dto.RatingDto;
+import com.itech.learning.domain.dto.SubjectDto;
+import com.itech.learning.service.RatingService;
 import com.itech.learning.service.SubjectService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -14,19 +15,66 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SubjectController {
     private final SubjectService subjectService;
+    private final RatingService ratingService;
 
     @GetMapping("/subjects")
-    public List<Subject> findAll() {
-        return subjectService.getAll();
+    public ResponseEntity<List<SubjectDto>> findAll() {
+        return ResponseEntity.ok(subjectService.getAll());
     }
 
-    @GetMapping("/subjects/{id}")
-    public Subject findById(@PathVariable Long id) {
-        return subjectService.findById(id);
+    @GetMapping("/subjects/{subjectId}")
+    public ResponseEntity<SubjectDto> findById(@PathVariable Long subjectId) {
+        return ResponseEntity.ok(subjectService.findDtoById(subjectId));
     }
 
-    @GetMapping("/subjects/{id}/lessons")
-    public List<Lesson> findSubjectLessons(@PathVariable Long id) {
-        return subjectService.getSubjectLessons(id);
+    @GetMapping("/subjects/{subjectId}/ratings")
+    public ResponseEntity<List<RatingDto>> getSubjectRatings(@PathVariable Long subjectId) {
+        return ResponseEntity.ok(subjectService.getSubjectRatings(subjectId));
     }
+
+    @GetMapping("/subjects/{subjectId}/ratings/{ratingId}")
+    public ResponseEntity<RatingDto> getSubjectRatings(@PathVariable Long subjectId, @PathVariable Long ratingId) {
+        return ResponseEntity.ok(subjectService.getSubjectRatingById(subjectId, ratingId));
+    }
+
+    @PutMapping("/subjects/{subjectId}")
+    public ResponseEntity<SubjectDto> update(@PathVariable Long subjectId, @RequestBody SubjectDto subjectDto) {
+        return ResponseEntity.ok(subjectService.update(subjectId, subjectDto));
+    }
+
+    @PutMapping("/subjects/{subjectId}/ratings/{ratingId}")
+    public ResponseEntity<RatingDto> updateRating(@PathVariable Long ratingId, @RequestBody RatingDto ratingDto) {
+        return ResponseEntity.ok(ratingService.update(ratingId, ratingDto));
+    }
+
+    @PostMapping("/subjects")
+    ResponseEntity<SubjectDto> create(@RequestBody SubjectDto subjectDto) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(subjectService.create(subjectDto));
+    }
+
+    @PostMapping("/subjects/{subjectId}/ratings")
+    public ResponseEntity<RatingDto> createRating(@PathVariable Long subjectId, @RequestBody RatingDto ratingDto) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(subjectService.addRating(subjectId, ratingDto));
+    }
+
+    @DeleteMapping("/subjects/{subjectId}")
+    public ResponseEntity<?> delete(@PathVariable Long subjectId) {
+        subjectService.deleteById(subjectId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(String.format("Subject[%d] was deleted", subjectId));
+    }
+
+    @DeleteMapping("/subjects/{subjectId}/ratings/{ratingId}")
+    public ResponseEntity<?> deleteRating(@PathVariable Long ratingId) {
+        ratingService.deleteById(ratingId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(String.format("Rating[%d] was deleted", ratingId));
+    }
+
 }
