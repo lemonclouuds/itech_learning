@@ -10,9 +10,12 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public enum UserRole {
-    ADMIN(Set.of(UserPermission.SUBJECT_WRITE, UserPermission.SUBJECT_READ,
-                UserPermission.USER_WRITE, UserPermission.USER_READ)),
-    STUDENT(Set.of(UserPermission.SUBJECT_READ, UserPermission.USER_READ));
+    ADMIN(Set.of(UserPermission.SUBJECT_READ, UserPermission.SUBJECT_WRITE,
+            UserPermission.USER_READ, UserPermission.USER_WRITE,
+            UserPermission.RATING_READ, UserPermission.RATING_WRITE)),
+
+    STUDENT(Set.of(UserPermission.SUBJECT_READ, UserPermission.USER_READ,
+            UserPermission.RATING_READ, UserPermission.RATING_WRITE));
 
     @Getter
     private final Set<UserPermission> permissions;
