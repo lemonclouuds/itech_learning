@@ -20,7 +20,7 @@ import java.util.Objects;
                 @UniqueConstraint(name = "username_unique", columnNames = "username")
         }
 )
-public class User implements UserDetails {
+public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -46,18 +46,23 @@ public class User implements UserDetails {
     @Column(name = "user_role", nullable = false)
     private UserRole userRole;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_status", nullable = false)
+    private UserStatus userStatus;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference("user")
     private List<Rating> rates;
 
     public User(String firstName, String lastName, String email,
-                String username, String password, UserRole userRole) {
+                String username, String password, UserRole userRole, UserStatus userStatus) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.username = username;
         this.password = password;
         this.userRole = userRole;
+        this.userStatus = userStatus;
     }
 
     @Override
@@ -82,7 +87,8 @@ public class User implements UserDetails {
                 ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", userRole=" + userRole +
+                ", userRole=" + userRole + '\'' +
+                ", userStatus=" + userStatus +
                 '}';
     }
 
@@ -93,21 +99,21 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return userStatus.equals(UserStatus.ACTIVE);
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return userStatus.equals(UserStatus.ACTIVE);
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return userStatus.equals(UserStatus.ACTIVE);
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return userStatus.equals(UserStatus.ACTIVE);
     }
 }

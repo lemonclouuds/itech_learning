@@ -1,6 +1,7 @@
 package com.itech.learning.domain.dto;
 
 import com.itech.learning.domain.UserRole;
+import com.itech.learning.domain.UserStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,8 @@ public class UserDto {
     private String password;
 
     private UserRole userRole;
+
+    private UserStatus userStatus;
 
     @Override
     public boolean equals(Object o) {
