@@ -1,6 +1,5 @@
 package com.itech.learning.domain;
 
-import com.itech.learning.security.UserPermission;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
