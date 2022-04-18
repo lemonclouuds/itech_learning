@@ -9,6 +9,9 @@ import com.itech.learning.helper.MapperHelper;
 import com.itech.learning.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +23,9 @@ import java.util.List;
 import static com.itech.learning.constants.ExceptionMessage.RATING_WITH_ID_NOT_FOUND;
 import static com.itech.learning.constants.ExceptionMessage.USER_WITH_ID_NOT_FOUND;
 
-@Service
+@Service("userService")
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
     private static ModelMapper modelMapper = new ModelMapper();
 
     private final UserRepository userRepository;
@@ -88,5 +91,12 @@ public class UserService {
                 .orElseThrow(
                         () -> new EntityNotFoundException(String.format(RATING_WITH_ID_NOT_FOUND, ratingId)));
         return modelMapper.map(found, RatingDto.class);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findUserByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException(String.format("User with username '%s' not found", username))
+        );
     }
 }
