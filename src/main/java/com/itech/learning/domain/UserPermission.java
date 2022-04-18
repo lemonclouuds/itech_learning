@@ -1,4 +1,4 @@
-package com.itech.learning.security;
+package com.itech.learning.domain;
 
 public enum UserPermission {
     USER_READ("user:read"),
