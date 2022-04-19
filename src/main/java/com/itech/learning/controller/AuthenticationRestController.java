@@ -1,15 +1,14 @@
 package com.itech.learning.controller;
 
 import com.itech.learning.domain.User;
-import com.itech.learning.repository.UserRepository;
 import com.itech.learning.security.JwtTokenProvider;
+import com.itech.learning.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,8 +26,8 @@ import java.util.Map;
 public class AuthenticationRestController {
 
     private final AuthenticationManager authenticationManager;
-    private UserRepository userRepository;
-    private JwtTokenProvider jwtTokenProvider;
+    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequestDto requestDto) {
@@ -36,9 +35,7 @@ public class AuthenticationRestController {
             String username = requestDto.getUsername();
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
-            User user = userRepository.findUserByUsername(username).orElseThrow(
-                    () -> new UsernameNotFoundException(String.format("User with username %s not found", username)
-                    ));
+            User user = (User) userService.loadUserByUsername(username);
             String token = jwtTokenProvider.createToken(username, user.getUserRole().name());
             Map<Object, Object> response = new HashMap<>();
             response.put("username", username);
